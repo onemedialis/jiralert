@@ -202,7 +202,11 @@ func (r *Receiver) Notify(data *alertmanager.Data, hashJiraLabel bool, updateSum
 		}
 	}
 
-	return r.create(issue)
+	if ok, err := r.create(issue); ok {
+		return ok, err
+	}
+
+	return r.toTodo(issue.Key)
 }
 
 // deepCopyWithTemplate returns a deep copy of a map/slice/array/string/int/bool or combination thereof, executing the
@@ -365,6 +369,11 @@ func (r *Receiver) updateDescription(issueKey string, description string) (bool,
 	}
 	level.Debug(r.logger).Log("msg", "issue summary updated", "key", issue.Key, "id", issue.ID)
 	return false, nil
+}
+
+func (r *Receiver) toTodo(issueKey string) (bool, error) {
+	fmt.Println(r.conf.TodoState)
+	return r.doTransition(issueKey, r.conf.TodoState)
 }
 
 func (r *Receiver) reopen(issueKey string) (bool, error) {

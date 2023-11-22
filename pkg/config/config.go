@@ -135,6 +135,7 @@ type ReceiverConfig struct {
 	Project        string    `yaml:"project" json:"project"`
 	IssueType      string    `yaml:"issue_type" json:"issue_type"`
 	Summary        string    `yaml:"summary" json:"summary"`
+	TodoState      string    `yaml:"todo_state" json:"todo_state"`
 	ReopenState    string    `yaml:"reopen_state" json:"reopen_state"`
 	ReopenDuration *Duration `yaml:"reopen_duration" json:"reopen_duration"`
 
@@ -269,6 +270,12 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 				return fmt.Errorf("missing summary in receiver %q", rc.Name)
 			}
 			rc.Summary = c.Defaults.Summary
+		}
+		if rc.TodoState == "" {
+			if c.Defaults.TodoState == "" {
+				return fmt.Errorf("missing todo_state in receiver %q", rc.Name)
+			}
+			rc.TodoState = c.Defaults.TodoState
 		}
 		if rc.ReopenState == "" {
 			if c.Defaults.ReopenState == "" {
