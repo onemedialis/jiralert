@@ -1,10 +1,9 @@
-FROM golang:1.19 AS builder
-WORKDIR /go/src/github.com/prometheus-community/jiralert
-COPY . /go/src/github.com/prometheus-community/jiralert
-RUN GO111MODULE=on GOBIN=/tmp/bin make
+FROM golang:1.21 AS builder
+WORKDIR /opt/app
+COPY . .
+RUN CGO_ENABLED=0 go build -o jiralert ./cmd/jiralert
 
-FROM quay.io/prometheus/busybox-linux-amd64:latest
-
-COPY --from=builder /go/src/github.com/prometheus-community/jiralert/jiralert /bin/jiralert
-
+FROM alpine:latest
+COPY --from=builder /opt/app/jiralert /bin/jiralert
 ENTRYPOINT [ "/bin/jiralert" ]
+
