@@ -386,7 +386,6 @@ func (r *Receiver) updateDescription(issueKey string, description string) (bool,
 }
 
 func (r *Receiver) toTodo(issueKey string) (bool, error) {
-	fmt.Println(r.conf.TodoState)
 	return r.doTransition(issueKey, r.conf.TodoState)
 }
 
