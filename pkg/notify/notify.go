@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -197,6 +198,15 @@ func (r *Receiver) Notify(data *alertmanager.Data, hashJiraLabel bool, updateSum
 		for k, v := range data.GroupLabels {
 			issue.Fields.Labels = append(issue.Fields.Labels, fmt.Sprintf("%s=%.200q", k, v))
 		}
+	}
+
+	if dueInXDaysStr := data.CommonAnnotations["dueInXDays"]; dueInXDaysStr != "" {
+		dueInXDays, err := strconv.Atoi(dueInXDaysStr)
+		if err != nil {
+			return false, err
+		}
+		dueDate := time.Now().AddDate(0, 0, dueInXDays)
+		issue.Fields.Unknowns["duedate"] = dueDate.Format("2006-01-02")
 	}
 
 	for key, value := range r.conf.Fields {
