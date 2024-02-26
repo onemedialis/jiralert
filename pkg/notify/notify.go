@@ -394,7 +394,8 @@ func (r *Receiver) reopen(issueKey string) (bool, error) {
 }
 
 func (r *Receiver) create(issue *jira.Issue) (bool, error) {
-	level.Debug(r.logger).Log("msg", "create", "issue", fmt.Sprintf("%+v", *issue.Fields))
+	level.Debug(r.logger).Log("msg", "create", "issue", fmt.Sprintf("%+v", *issue))
+
 	newIssue, resp, err := r.client.Create(issue)
 	if err != nil {
 		return handleJiraErrResponse("Issue.Create", resp, err, r.logger)
